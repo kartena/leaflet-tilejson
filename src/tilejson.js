@@ -52,6 +52,23 @@ L.TileJSON = (function() {
         if (tileJSON.attribution) {
             cfg.attributionControl = true;
         }
+
+        if (tileJSON.projection) {
+            var t = tileJSON.transform;
+            cfg.crs = 
+                L.CRS.proj4js(tileJSON.crs,
+                              tileJSON.projection,
+                              new L.Transformation(t[0], t[1], t[2], t[3]));
+            // FIXME: This might not be true for all projections, actually
+            cfg.continuousWorld = true;
+        }
+
+        if (tileJSON.scales) {
+            var s = tileJSON.scales;
+            cfg.scale = function(zoom) {
+                return s[zoom];
+            }
+        }
         
         return cfg;
     };
@@ -68,6 +85,11 @@ L.TileJSON = (function() {
         
         if (tileJSON.scheme) {
             cfg.scheme = tileJSON.scheme;
+        }
+
+        if (tileJSON.projection) {
+            // FIXME: This might not be true for all projections, actually
+            cfg.continuousWorld = true;
         }
         
         return cfg;
