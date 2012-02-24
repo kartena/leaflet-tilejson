@@ -38,6 +38,7 @@ var map = L.TileJSON.createMap('map', osmTileJSON);
 ## Limitations
 
 This is, as everything else, a work in progress. Current known limitations are:
+
  * No support for UTFGrid interaction. Mostly because Leaflet does not currently support UTFGrid.
  * Only the first tile URL specified is used. The method for specifying this in the TileJSON 
    specification and in Leaflet differs in ways that makes it hard to implement in the general case.
