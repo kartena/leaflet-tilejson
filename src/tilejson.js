@@ -127,7 +127,7 @@ L.TileJSON = (function() {
 
         var mapConfig = createMapConfig(tileJSON, mapConfig);
         mapConfig.layers = [createTileLayer(tileJSON, tileLayerConfig)];
-        var map = new L.Map(id, mapConfig);
+        return new L.Map(id, mapConfig);
     }
 
     return {
