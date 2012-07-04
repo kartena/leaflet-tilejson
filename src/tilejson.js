@@ -102,6 +102,10 @@ L.TileJSON = (function() {
             cfg.continuousWorld = true;
         }
         
+        if (tileJSON.tilesize) {
+            cfg.tileSize = tileJSON.tilesize;
+        }
+        
         return cfg;
     };
 
