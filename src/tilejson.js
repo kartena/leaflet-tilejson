@@ -10,7 +10,16 @@ L.TileJSON = (function() {
         return v.match(semverRegEx); 
     };
 
-   function defined(o){
+	function leafletVersion(){
+		var versions = (L.version ? L.version : L.VERSION).split(".");
+		return {
+			major: versions[0],
+			minor: versions[1] ? versions[1] : 0,
+			micro: versions[2] ? versions[2] : 0
+		}
+	}
+
+	function defined(o){
         return (typeof o !== "undefined" && o !== null);
     }
 
@@ -68,15 +77,21 @@ L.TileJSON = (function() {
                               new L.Transformation(t[0], t[1], t[2], t[3]));
             // FIXME: This might not be true for all projections, actually
             cfg.continuousWorld = true;
+
+			if (tileJSON.scales) {
+				var scaleFun = function(zoom) {
+					return tileJSON.scales[zoom];
+				}
+				var version = leafletVersion();
+
+				if(version.major == 0 && version.minor < 4){
+					cfg.scale = scaleFun;
+				} else {
+					cfg.crs.scale = scaleFun;
+				}
+			}
         }
 
-        if (tileJSON.scales) {
-            var s = tileJSON.scales;
-            cfg.scale = function(zoom) {
-                return s[zoom];
-            }
-        }
-        
         return cfg;
     };
 
@@ -109,8 +124,6 @@ L.TileJSON = (function() {
         return cfg;
     };
 
-
- 
 
     function createTileLayer(tileJSON) {
         var tileUrl = tileJSON.tiles[0].replace(/\$({[sxyz]})/g, '$1');
