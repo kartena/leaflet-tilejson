@@ -40,8 +40,8 @@ L.TileJSON = (function() {
         crs: function(context, crs) {
             context.crs.code = crs;
         },
-        scale: function(context, s) {
-            context.map.scale = function(zoom) {
+        scales: function(context, s) {
+            context.crs.scale = function(zoom) {
                 return s[zoom];
             }
         },
@@ -110,6 +110,9 @@ L.TileJSON = (function() {
                     context.crs.code,
                     context.crs.projection,
                     context.crs.transformation);
+            if (defined(context.crs.scale)) {
+                context.map.crs.scale = context.crs.scale;
+            }
             // TODO: Setting continuousWorld to true might
             // not be correct for all projections.
             context.map.continuousWorld = true;
