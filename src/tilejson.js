@@ -75,14 +75,14 @@ L.TileJSON = (function() {
         return (typeof o !== "undefined" && o !== null);
     }
 
-    function parseTileJSON(tileJSON, mapConfig, tileLayerConfig) {
+    function parseTileJSON(tileJSON, options) {
         var context = {
             tileLayer: L.Util.extend({
                 minZoom: 0,
                 maxZoom: 22
-            }, tileLayerConfig || {}),
+            }, options.tileLayerConfig || {}),
 
-            map: L.Util.extend({}, mapConfig || {}),
+            map: L.Util.extend({}, options.mapConfig || {}),
 
             crs: {},
 
