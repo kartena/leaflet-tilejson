@@ -1,3 +1,9 @@
+if (typeof L == "undefined"
+    || typeof L.version == "undefined"
+    || L.version < '0.4') {
+    throw "Leaflet not loaded or version is < 0.4";
+}
+
 L.TileJSON = (function() {
     var handlers = {
         tilejson: function(context, tilejson) {
