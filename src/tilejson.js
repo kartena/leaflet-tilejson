@@ -1,159 +1,137 @@
 L.TileJSON = (function() {
-    var semver = "\\s*[v=]*\\s*([0-9]+)"    // major
-        + "\\.([0-9]+)"                  // minor
-        + "\\.([0-9]+)"                  // patch
-        + "(-[0-9]+-?)?"                 // build
-        + "([a-zA-Z-][a-zA-Z0-9-\.:]*)?"; // tag
-    var semverRegEx = new RegExp("^\\s*"+semver+"\\s*$");
-    
-    var parse = function(v) {
-        return v.match(semverRegEx); 
+    var handlers = {
+        tilejson: function(context, tilejson) {
+            v = semver.parse(tilejson);
+            if (!v || v[1] != 2) {
+                throw new Exception('This parser supports version 2 '
+                                    + 'of TileJSON. (Provided version: "'
+                                    + tileJSON.tilejson + '"');
+            }
+
+            context.validation.version = true;
+        },
+        minzoom: function(context, minZoom) {
+            context.tileLayer.minZoom = minZoom;
+        },
+        maxzoom: function(context, maxZoom) {
+            context.tileLayer.maxZoom = maxZoom;
+        },
+        center: function(context, center) {
+            context.map.center = new L.LatLng(center[1], center[0]);
+            context.map.zoom = center[2];
+        },
+        attribution: function(context, attribution) {
+            context.map.attributionControl = true;
+            context.tileLayer.attribution = attribution;
+        },
+        projection: function(context, projection) {
+            context.crs.projection = projection;
+        },
+        transform: function(context, t) {
+            context.crs.transformation =
+                new L.Transformation(t[0], t[1], t[2], t[3]);
+        },
+        crs: function(context, crs) {
+            context.crs.code = crs;
+        },
+        scale: function(context, s) {
+            context.map.scale = function(zoom) {
+                return s[zoom];
+            }
+        },
+        scheme: function(context, scheme) {
+            context.tileLayer.scheme = scheme;
+        },
+        tilesize: function(context, tileSize) {
+            context.tileLayer.tileSize = tileSize;
+        },
+        tiles: function(context, tileUrls) {
+            context.tileUrls = tileUrls;
+        }
     };
 
-	function leafletVersion(){
-		var versions = (L.version ? L.version : L.VERSION).split(".");
-		return {
-			major: versions[0],
-			minor: versions[1] ? versions[1] : 0,
-			micro: versions[2] ? versions[2] : 0
-		}
-	}
+    var semver = (function() {
+        var pattern = "\\s*[v=]*\\s*([0-9]+)"    // major
+            + "\\.([0-9]+)"                  // minor
+            + "\\.([0-9]+)"                  // patch
+            + "(-[0-9]+-?)?"                 // build
+            + "([a-zA-Z-][a-zA-Z0-9-\.:]*)?"; // tag
+        var semverRegEx = new RegExp("^\\s*"+pattern+"\\s*$");
 
-	function defined(o){
+        return {
+            parse: function(v) {
+                return v.match(semverRegEx);
+            }
+        };
+    })();
+
+    function defined(o){
         return (typeof o !== "undefined" && o !== null);
     }
 
-    function validateVersion(tileJSON) {
-        if (!tileJSON.tilejson) {
-            throw new Exception('Missing property "tilejson".');
-        }
-        
-        v = parse(tileJSON.tilejson);
-        if (!v || v[1] != 2) {
-            throw new Exception('This parser supports version 2 '
-                                + 'of TileJSON. (Provided version: "'
-                                + tileJSON.tilejson + '"');
-        }
-    };
+    function parseTileJSON(tileJSON, mapConfig, tileLayerConfig) {
+        var context = {
+            tileLayer: L.Util.extend({
+                minZoom: 0,
+                maxZoom: 22
+            }, tileLayerConfig || {}),
 
-    function parseZoom(tileJSON, cfg) {
-        if (tileJSON.minzoom) {
-            cfg.minZoom = parseInt(tileJSON.minzoom);
-        }
+            map: L.Util.extend({}, mapConfig || {}),
 
-        if (tileJSON.maxzoom) {
-            cfg.maxZoom = parseInt(tileJSON.maxzoom);
-        } else {
-            cfg.maxZoom = 22;
+            crs: {},
+
+            validation: {
+                version: false
+            }
+        };
+
+        for (var key in handlers) {
+            if (defined(tileJSON[key])) {
+                handlers[key](context, tileJSON[key], tileJSON);
+            }
         }
 
-        return cfg;
+        for (var validationKey in context.validation) {
+            if (!context.validation[validationKey]) {
+                throw new Exception('Missing property "'
+                    + validationKey + '".');
+            }
+        }
+
+        if (defined(context.crs.projection)) {
+            context.map.crs =
+                new L.CRS.proj4js(
+                    context.crs.code,
+                    context.crs.projection,
+                    context.crs.transformation);
+            // TODO: Setting continuousWorld to true might
+            // not be correct for all projections.
+            context.map.continuousWorld = true;
+            context.tileLayer.continuousWorld = true;
+        }
+
+        return context;
     }
 
-    function createMapConfig(tileJSON, cfg) {
-        validateVersion(tileJSON);
-
-        if (!defined(cfg)){
-	    cfg = {};
-	}
-
-        parseZoom(tileJSON, cfg);
-        
-        if (tileJSON.center) {
-            var center = tileJSON.center;
-            cfg.center = new L.LatLng(center[1], center[0]);
-            cfg.zoom = center[2];
-        }
-
-        if (tileJSON.attribution) {
-            cfg.attributionControl = true;
-        }
-
-        if (tileJSON.projection) {
-            var t = tileJSON.transform;
-            cfg.crs = 
-                L.CRS.proj4js(tileJSON.crs,
-                              tileJSON.projection,
-                              new L.Transformation(t[0], t[1], t[2], t[3]));
-            // FIXME: This might not be true for all projections, actually
-            cfg.continuousWorld = true;
-
-			if (tileJSON.scales) {
-				var scaleFun = function(zoom) {
-					return tileJSON.scales[zoom];
-				}
-				var version = leafletVersion();
-
-				if(version.major == 0 && version.minor < 4){
-					cfg.scale = scaleFun;
-				} else {
-					cfg.crs.scale = scaleFun;
-				}
-			}
-        }
-
-        return cfg;
+    function createTileLayer(context) {
+        var tileUrl = context.tileUrls[0].replace(/\$({[sxyz]})/g, '$1');
+        return new L.TileLayer(tileUrl, context.tileLayer);
     };
-
-    function createTileLayerConfig(tileJSON, cfg) {
-        validateVersion(tileJSON);
-
-        if (!defined(cfg)){
-	    cfg = {};
-	}
-        
-        parseZoom(tileJSON, cfg);
-        
-        if (tileJSON.attribution) {
-            cfg.attribution = tileJSON.attribution;
-        }
-        
-        if (tileJSON.scheme) {
-            cfg.scheme = tileJSON.scheme;
-        }
-
-        if (tileJSON.projection) {
-            // FIXME: This might not be true for all projections, actually
-            cfg.continuousWorld = true;
-        }
-        
-        if (tileJSON.tilesize) {
-            cfg.tileSize = tileJSON.tilesize;
-        }
-        
-        return cfg;
-    };
-
-
-    function createTileLayer(tileJSON) {
-        var tileUrl = tileJSON.tiles[0].replace(/\$({[sxyz]})/g, '$1');
-        return new L.TileLayer(tileUrl, createTileLayerConfig(tileJSON));
-    };
-
-    function createMap(id, tileJSON, options) {
-	var mapConfig;
-	var tileLayerConfig;
-	
-	if(defined(options)){	
-	    mapConfig = options.mapOptions;
-	    tileLayerConfig = options.tileLayerOptions;
-	} else {
-	    mapConfig = {};
-	    tileLayerConfig = {};
-	}
-
-        var mapConfig = createMapConfig(tileJSON, mapConfig);
-        mapConfig.layers = [createTileLayer(tileJSON, tileLayerConfig)];
-        return new L.Map(id, mapConfig);
-    }
 
     return {
-        createMapConfig: createMapConfig,
-
-        createTileLayerConfig: createTileLayerConfig,
-
-        createTileLayer: createTileLayer,
-
-        createMap: createMap
-    }
+        createMapConfig: function(tileJSON, cfg) {
+            return parseTileJSON(tileJSON, {mapConfig: cfg}).map;
+        },
+        createTileLayerConfig: function(tileJSON, cfg) {
+            return parseTileJSON(tileJSON, {tileLayerConfig: cfg}).tileLayer;
+        },
+        createTileLayer: function(tileJSON, cfg) {
+            return createTileLayer(this.createMapConfig(tileJSON, cfg));
+        },
+        createMap: function(id, tileJSON, options) {
+            var context = parseTileJSON(tileJSON, options);
+            context.map.layers = [createTileLayer(context)];
+            return new L.Map(id, context.map);
+        }
+    };
 }());
