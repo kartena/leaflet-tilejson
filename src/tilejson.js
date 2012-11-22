@@ -7,11 +7,11 @@ if (typeof L == "undefined"
 L.TileJSON = (function() {
     var handlers = {
         tilejson: function(context, tilejson) {
-            v = semver.parse(tilejson);
+            var v = semver.parse(tilejson);
             if (!v || v[1] != 2) {
-                throw new Exception('This parser supports version 2 '
+                throw new Error('This parser supports version 2 '
                                     + 'of TileJSON. (Provided version: "'
-                                    + tileJSON.tilejson + '"');
+                                    + tilejson.tilejson + '"');
             }
 
             context.validation.version = true;
@@ -43,7 +43,7 @@ L.TileJSON = (function() {
         scales: function(context, s) {
             context.crs.scale = function(zoom) {
                 return s[zoom];
-            }
+            };
         },
         scheme: function(context, scheme) {
             context.tileLayer.scheme = scheme;
@@ -99,7 +99,7 @@ L.TileJSON = (function() {
 
         for (var validationKey in context.validation) {
             if (!context.validation[validationKey]) {
-                throw new Exception('Missing property "'
+                throw new Error('Missing property "'
                     + validationKey + '".');
             }
         }
