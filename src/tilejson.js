@@ -133,8 +133,9 @@ L.TileJSON = (function() {
         createTileLayerConfig: function(tileJSON, cfg) {
             return parseTileJSON(tileJSON, {tileLayerConfig: cfg}).tileLayer;
         },
-        createTileLayer: function(tileJSON, cfg) {
-            return createTileLayer(this.createMapConfig(tileJSON, cfg));
+        createTileLayer: function(tileJSON, options) {
+            var context = parseTileJSON(tileJSON, options || {});
+            return createTileLayer(context);
         },
         createMap: function(id, tileJSON, options) {
             var context = parseTileJSON(tileJSON, options || {});
