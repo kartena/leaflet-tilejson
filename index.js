@@ -1,10 +1,20 @@
-if (typeof L == "undefined"
-    || typeof L.version == "undefined"
-    || L.version < '0.4') {
-    throw "Leaflet not loaded or version is < 0.4";
-}
-
-L.TileJSON = (function() {
+(function (factory) {
+    var L;
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define(['leaflet', 'proj4leaflet'], factory);
+    } else if (typeof module !== 'undefined') {
+        // Node/CommonJS
+        L = require('leaflet');
+        proj4leaflet = require('proj4leaflet');
+        module.exports = factory(L, proj4leaflet);
+    } else {
+        // Browser globals
+        if (typeof window.L === 'undefined' || typeof window.L.Proj === 'undefined')
+            throw "Leaflet and proj4leaflet must be loaded first";
+        factory(window.L);
+    }
+}(function (L) {
     var handlers = {
         tilejson: function(context, tilejson) {
             var v = semver.parse(tilejson);
@@ -113,9 +123,8 @@ L.TileJSON = (function() {
             if (defined(context.crs.scale)) {
                 context.map.crs.scale = context.crs.scale;
             }
-            // TODO: Setting continuousWorld to true might
-            // not be correct for all projections.
-            context.map.continuousWorld = true;
+            // TODO: only set to true if bounds is not the whole
+            // world.
             context.tileLayer.continuousWorld = true;
         }
 
@@ -127,7 +136,7 @@ L.TileJSON = (function() {
         return new L.TileLayer(tileUrl, context.tileLayer);
     };
 
-    return {
+    L.TileJSON = {
         createMapConfig: function(tileJSON, cfg) {
             return parseTileJSON(tileJSON, {mapConfig: cfg}).map;
         },
@@ -144,4 +153,6 @@ L.TileJSON = (function() {
             return new L.Map(id, context.map);
         }
     };
-}());
+
+    return L.TileJSON;
+}));
