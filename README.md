@@ -1,4 +1,4 @@
-# leaflet-tilejson
+# leaflet-tilejson [![NPM version](https://badge.fury.io/js/leaflet-tilejson.png)](http://badge.fury.io/js/leaflet-tilejson)
 
 leaflet-tilejson adds support for the 
 [TileJSON](https://github.com/mapbox/TileJSON) specification 
