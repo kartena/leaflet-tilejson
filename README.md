@@ -1,12 +1,12 @@
 # leaflet-tilejson [![NPM version](https://badge.fury.io/js/leaflet-tilejson.png)](http://badge.fury.io/js/leaflet-tilejson)
 
 leaflet-tilejson adds support for the 
-[TileJSON](https://github.com/mapbox/TileJSON) specification 
-to the [Leaflet](http://leaflet.cloudmade.com) map client.
+[TileJSON](https://github.com/mapbox/tilejson-spec) specification 
+to the [Leaflet](http://leafletjs.com) map client.
 
 For extra fun and possibility of future profit, leaflet-tilejson 
 also supports an 
-[extension to the TileJSON specification](https://github.com/perliedman/TileJSON/tree/master/2.0.0), 
+[extension to the TileJSON specification](https://github.com/mapbox/tilejson-spec/tree/master/2.0.0), 
 which allows other projections than spherical-mercator. This 
 extension requires [Proj4Leaflet](https://github.com/kartena/Proj4Leaflet)
 and [Proj4js](http://proj4js.org) as extra dependencies.
