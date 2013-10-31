@@ -1,8 +1,8 @@
 # leaflet-tilejson [![NPM version](https://badge.fury.io/js/leaflet-tilejson.png)](http://badge.fury.io/js/leaflet-tilejson)
 
 leaflet-tilejson adds support for the 
-[TileJSON](https://github.com/mapbox/TileJSON) specification 
-to the [Leaflet](http://leaflet.cloudmade.com) map client.
+[TileJSON](https://github.com/mapbox/tilejson-spec) specification 
+to the [Leaflet](http://leafletjs.com) map client.
 
 For extra fun and possibility of future profit, leaflet-tilejson 
 also supports an 
