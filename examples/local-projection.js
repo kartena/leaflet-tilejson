@@ -20,4 +20,3 @@ var osmTileJSON = {
 };
 
 var map = L.TileJSON.createMap('map', osmTileJSON);
-var b = new Billing.Leaflet(map, "github-demo", "lmv", parseInt(Math.random() * 10000000), window.location.hostname, window.location.href);
