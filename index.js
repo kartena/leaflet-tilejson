@@ -148,8 +148,14 @@
             return createTileLayer(context);
         },
         createMap: function(id, tileJSON, options) {
-            var context = parseTileJSON(tileJSON, options || {});
+            options = options || {};
+            var context = parseTileJSON(tileJSON, options);
             context.map.layers = [createTileLayer(context)];
+
+            if (options.setView !== undefined && !options.setView) {
+                delete context.map.center;
+            }
+
             return new L.Map(id, context.map);
         }
     };
