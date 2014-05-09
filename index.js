@@ -58,6 +58,9 @@
         scheme: function(context, scheme) {
             context.tileLayer.scheme = scheme;
         },
+        subdomains: function(context, subdomains) {
+            context.tileLayer.subdomains = subdomains;  
+        },
         tilesize: function(context, tileSize) {
             context.tileLayer.tileSize = tileSize;
         },
