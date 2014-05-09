@@ -22,13 +22,11 @@ var osmTileJSON = {
     "attribution": "&copy; OpenStreetMap contributors, CC-BY-SA",
     "scheme": "xyz",
     "tiles": [
-        "http://a.tile.openstreetmap.org/${z}/${x}/${y}.png",
-        "http://b.tile.openstreetmap.org/${z}/${x}/${y}.png",
-        "http://c.tile.openstreetmap.org/${z}/${x}/${y}.png"
+        "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
     ],
+    "subdomains": ["a","b","c"],
     "minzoom": 0,
     "maxzoom": 18,
-    "bounds": [ -180, -85, 180, 85 ],
     "center": [ 11.9, 57.7, 8 ]
 };
 
@@ -42,4 +40,5 @@ This is, as everything else, a work in progress. Current known limitations are:
  * No support for UTFGrid interaction. Mostly because Leaflet does not currently support UTFGrid.
  * Only the first tile URL specified is used. The method for specifying this in the TileJSON 
    specification and in Leaflet differs in ways that makes it hard to implement in the general case.
+ * When using {s}, provide non-default subdomains (Leaflet defaults are abc) as a string or array. This is not in the TileJSON spec, and is only available here due to the previously mentioned limitation. 
  * Bounds are not used.
