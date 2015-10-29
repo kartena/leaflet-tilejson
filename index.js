@@ -57,6 +57,9 @@
         },
         scheme: function(context, scheme) {
             context.tileLayer.scheme = scheme;
+            if (scheme === 'tms') {
+                context.tileLayer.tms = true;
+            }
         },
         tilesize: function(context, tileSize) {
             context.tileLayer.tileSize = tileSize;
