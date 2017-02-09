@@ -1,6 +1,6 @@
 {
   "name": "leaflet-tilejson",
-  "version": "1.0.0-rc1",
+  "version": "1.0.0-rc2",
   "description": "TileJSON integration for Leaflet, with extension for local projections using Proj4Leaflet",
   "main": "index.js",
   "directories": {
