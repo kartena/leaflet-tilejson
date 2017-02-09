@@ -37,6 +37,7 @@
             context.map.zoom = center[2];
         },
         bounds: function(context, b) {
+            // TileJson order is lng lat lng lat
             // left, bottom, right, top
             var left = b[0], bottom = b[1], right = b[2], top = b[3];
             context.bounds = L.latLngBounds([bottom, left], [top, right]);
@@ -80,9 +81,6 @@
         },
         tiles: function(context, tileUrls) {
             context.tileUrls = tileUrls;
-        },
-        bounds: function(context, bounds) {
-            context.bounds = new L.LatLngBounds([[bounds[1], bounds[0]], [bounds[3], bounds[2]]]);
         }
     };
 
