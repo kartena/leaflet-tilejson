@@ -68,12 +68,21 @@
         },
         scheme: function(context, scheme) {
             context.tileLayer.scheme = scheme;
+            if (scheme === 'tms') {
+                context.tileLayer.tms = true;
+            }
+        },
+        subdomains: function(context, subdomains) {
+            context.tileLayer.subdomains = subdomains;  
         },
         tilesize: function(context, tileSize) {
             context.tileLayer.tileSize = tileSize;
         },
         tiles: function(context, tileUrls) {
             context.tileUrls = tileUrls;
+        },
+        bounds: function(context, bounds) {
+            context.bounds = new L.LatLngBounds([[bounds[1], bounds[0]], [bounds[3], bounds[2]]]);
         }
     };
 
