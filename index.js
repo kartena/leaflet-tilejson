@@ -57,6 +57,9 @@
         },
         scheme: function(context, scheme) {
             context.tileLayer.scheme = scheme;
+            if (scheme === 'tms') {
+                context.tileLayer.tms = true;
+            }
         },
         subdomains: function(context, subdomains) {
             context.tileLayer.subdomains = subdomains;  
