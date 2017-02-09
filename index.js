@@ -63,6 +63,9 @@
         },
         tiles: function(context, tileUrls) {
             context.tileUrls = tileUrls;
+        },
+        bounds: function(context, bounds) {
+            context.bounds = new L.LatLngBounds([[bounds[1], bounds[0]], [bounds[3], bounds[2]]]);
         }
     };
 
