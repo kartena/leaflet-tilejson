@@ -141,15 +141,16 @@
             options.scales = defined(context.crs.scales) ? context.crs.scales : undefined;
             options.origin = defined(context.crs.origin) ? context.crs.origin : undefined;
 
-            if (defined(context.crs.scale)) {
-                context.map.crs.scale = context.crs.scale;
-            }
-
             context.map.crs =
                 new L.Proj.CRS(
                     context.crs.code,
                     context.crs.projection,
                     options);
+
+            if (defined(context.crs.scale)) {
+                context.map.crs.scale = context.crs.scale;
+            }
+
             // TODO: only set to true if bounds is not the whole
             // world.
             context.tileLayer.continuousWorld = true;
