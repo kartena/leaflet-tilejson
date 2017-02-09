@@ -60,6 +60,7 @@
             context.crs.code = crs;
         },
         scales: function(context, s) {
+            context.crs.scales = s;
             context.crs.scale = function(zoom) {
                 return s[zoom];
             };
@@ -137,7 +138,7 @@
 
             options.transformation = defined(context.crs.transformation) ? context.crs.transformation : undefined;
             options.resolutions = defined(context.crs.resolutions) ? context.crs.resolutions : undefined;
-            options.scale = defined(context.crs.scale) ? context.crs.scale : undefined;
+            options.scales = defined(context.crs.scales) ? context.crs.scales : undefined;
             options.origin = defined(context.crs.origin) ? context.crs.origin : undefined;
 
             if (defined(context.crs.scale)) {
