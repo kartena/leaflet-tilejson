@@ -138,9 +138,6 @@
                     context.crs.code,
                     context.crs.projection,
                     options);
-            /*if (defined(context.crs.scale)) {
-                context.map.crs.scale = context.crs.scale;
-            }*/
             // TODO: only set to true if bounds is not the whole
             // world.
             context.tileLayer.continuousWorld = true;
