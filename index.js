@@ -140,6 +140,10 @@
             options.scale = defined(context.crs.scale) ? context.crs.scale : undefined;
             options.origin = defined(context.crs.origin) ? context.crs.origin : undefined;
 
+            if (defined(context.crs.scale)) {
+                context.map.crs.scale = context.crs.scale;
+            }
+
             context.map.crs =
                 new L.Proj.CRS(
                     context.crs.code,
