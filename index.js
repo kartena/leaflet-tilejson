@@ -36,6 +36,15 @@
             context.map.center = new L.LatLng(center[1], center[0]);
             context.map.zoom = center[2];
         },
+        bounds: function(context, b) {
+            // TileJson order is lng lat lng lat
+            // left, bottom, right, top
+            var left = b[0], bottom = b[1], right = b[2], top = b[3];
+            context.bounds = L.latLngBounds([bottom, left], [top, right]);
+        },
+        origin: function (context, origin) {
+            context.crs.origin = origin;
+        },
         attribution: function(context, attribution) {
             context.map.attributionControl = true;
             context.tileLayer.attribution = attribution;
@@ -51,9 +60,13 @@
             context.crs.code = crs;
         },
         scales: function(context, s) {
+            context.crs.scales = s;
             context.crs.scale = function(zoom) {
                 return s[zoom];
             };
+        },
+        resolutions: function(context, res) {
+            context.crs.resolutions = res;
         },
         scheme: function(context, scheme) {
             context.tileLayer.scheme = scheme;
@@ -69,9 +82,6 @@
         },
         tiles: function(context, tileUrls) {
             context.tileUrls = tileUrls;
-        },
-        bounds: function(context, bounds) {
-            context.bounds = new L.LatLngBounds([[bounds[1], bounds[0]], [bounds[3], bounds[2]]]);
         }
     };
 
@@ -124,14 +134,23 @@
         }
 
         if (defined(context.crs.projection)) {
+            var options = {};
+
+            options.transformation = defined(context.crs.transformation) ? context.crs.transformation : undefined;
+            options.resolutions = defined(context.crs.resolutions) ? context.crs.resolutions : undefined;
+            options.scales = defined(context.crs.scales) ? context.crs.scales : undefined;
+            options.origin = defined(context.crs.origin) ? context.crs.origin : undefined;
+
             context.map.crs =
-                new L.CRS.proj4js(
+                new L.Proj.CRS(
                     context.crs.code,
                     context.crs.projection,
-                    context.crs.transformation);
+                    options);
+
             if (defined(context.crs.scale)) {
                 context.map.crs.scale = context.crs.scale;
             }
+
             // TODO: only set to true if bounds is not the whole
             // world.
             context.tileLayer.continuousWorld = true;

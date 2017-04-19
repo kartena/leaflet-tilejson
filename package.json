@@ -1,13 +1,14 @@
 {
   "name": "leaflet-tilejson",
-  "version": "0.7.0",
+  "version": "1.0.0-rc4",
   "description": "TileJSON integration for Leaflet, with extension for local projections using Proj4Leaflet",
   "main": "index.js",
   "directories": {
     "example": "examples"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "examples": "browserify -r leaflet:1.0.1 -r proj4leaflet:1.0.3 index.js -o dist.js"
   },
   "repository": {
     "type": "git",
@@ -19,12 +20,16 @@
     "Proj4"
   ],
   "author": "Per Liedman <per.liedman@kartena.se>",
+  "contributors": [
+    "Peter Thorin (https://github.com/pthorin)",
+    "Jan Pieter Waagmeester (https://github.com/jieter)",
+    "Robbie Trencheny (https://github.com/robbiet480)",
+    "Patrik Norman (https://github.com/patsy)",
+    "Gabe Smedresman (https://github.com/gabesmed)"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/kartena/leaflet-tilejson/issues"
   },
-  "dependencies": {
-    "leaflet": "~0.7.0",
-    "proj4leaflet": "~0.7.0"
-  }
+  "dependencies": {}
 }
